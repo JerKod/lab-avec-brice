@@ -19,10 +19,11 @@ pipeline {
                 }
             }
             steps {
-                sh '''
-                    ansible-playbook --version
-                    ansible-playbook deploy_click_counter.yml
-                '''
+                withCredentials([sshUserPrivateKey(credentialsId: 'WORKER_SSH_KEY_ID', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                    sh '''
+                        ansible-playbook deploy_click_counter.yml -u ${SSH_USER} --private-key ${SSH_KEY}
+                    '''
+                }
             }
         }
         
