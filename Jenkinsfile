@@ -11,8 +11,16 @@ pipeline {
         
         // Say Hello
         stage('Deploy app') {
+            agent {
+                docker { 
+                    image 'alpine/ansible:2.21.0'
+                    reuseNode true
+                    args '--privileged --user root'
+                }
+            }
             steps {
                 sh '''
+                    ansible-playbook --version
                     ansible-playbook deploy_click_counter.yml
                 '''
             }
