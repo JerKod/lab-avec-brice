@@ -2,12 +2,19 @@
 - name: Deploy Click counter app
   hosts: all
   tasks:
+    - name: Create a Docker network
+      community.docker.docker_network:
+        name: clicknet
+        state: present
+    
     - name: Run Redis container
       community.docker.docker_container:
         name: redis
         image: redis:alpine
         state: started
         restart_policy: always
+        networks:
+          - name: clicknet
 
     - name: Run Click Counter container
       community.docker.docker_container:
@@ -15,5 +22,7 @@
         image: kodekloud/click-counter
         state: started
         restart_policy: always
+        networks:
+          - name: clicknet
         ports:
           - "8085:5000"
